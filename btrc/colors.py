@@ -1,6 +1,5 @@
 import re
 from colr import color
-from .i18n import t
 
 HEX_PATTERN = re.compile(r"^#([A-Fa-f0-9]{6})$")
 
@@ -10,7 +9,7 @@ def get_valid_hex_color(prompt):
         value = input(prompt).strip()
         if HEX_PATTERN.match(value):
             return value
-        print(t("invalid_hex"))
+        print("invalid_hex")
 
 
 def hex_to_rgb(hex_color):
@@ -35,7 +34,7 @@ def get_outline_color_from_user(state_name, default_hex):
             user_input = default_hex
         if HEX_PATTERN.match(user_input):
             return tuple(int(user_input[i : i + 2], 16) for i in (1, 3, 5))
-        print(t("invalid_hex"))
+        print("invalid_hex")
 
 
 color_presets = {

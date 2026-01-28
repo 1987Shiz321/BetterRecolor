@@ -1,6 +1,6 @@
 from pathlib import Path
 
-BASE_DIR = Path("/content/drive/MyDrive/8MeTools/ButtonTextReColorizer").resolve()
+BASE_DIR = Path(__file__).resolve().parents[1]
 ASSETS_DIR = BASE_DIR / "Assets"
 TMP_DIR = BASE_DIR / "tmp"
 EDITED_BRLYT_DIR = BASE_DIR / "EditedBRLYT"
