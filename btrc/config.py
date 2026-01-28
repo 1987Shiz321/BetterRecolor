@@ -1,0 +1,11 @@
+from pathlib import Path
+
+BASE_DIR = Path(".").resolve()
+ASSETS_DIR = BASE_DIR / "Assets"
+TMP_DIR = BASE_DIR / "tmp"
+EDITED_BRLYT_DIR = BASE_DIR / "EditedBRLYT"
+EDITED_BRLAN_DIR = BASE_DIR / "EditedBRLAN"
+BRLYT_JSON5_DIR = TMP_DIR / "BRLYT"
+BRLAN_JSON5_DIR = TMP_DIR / "BRLAN"
+WUJ5_DIR = BASE_DIR / "wuj5"
+WUJ5_SCRIPT = WUJ5_DIR / "wuj5.py"
