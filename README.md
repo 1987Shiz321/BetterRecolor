@@ -63,6 +63,43 @@ Google Colab以外の環境でも実行できます。`Assets` などのフォ�
 5. **出力先**  
    完了後、`EditedBRLYT` と `EditedBRLAN` に出力されます。
 
+## 開発者向け
+
+### Lint / Test
+
+```sh
+pip install -r requirements.txt -r requirements-dev.txt
+ruff check .
+pytest
+```
+
+### リリース運用（CalVer）
+
+日付+連番のバージョン形式を使用します。例: `26.01.28.1`
+
+1. バージョン更新
+
+   ```sh
+   python scripts/bump_version.py
+   ```
+
+2. タグ作成
+
+   ```sh
+   python scripts/bump_version.py --tag
+   ```
+
+3. タグ作成 + push（CI成功後にReleaseが作成されます）
+
+   ```sh
+   python scripts/bump_version.py --tag --push
+   ```
+
+### CI / Release 条件
+
+- CI: `push` と `pull_request` で `ruff check .` と `pytest` が実行されます。
+- Release: CIが成功したコミットに付いた `v*` タグ（例: `v26.01.28.1`）がある場合のみ作成されます。
+
 ## よくある質問
 
 ### Q. 実行するセルの順番を間違えてしまった場合、どうすればよいですか？
