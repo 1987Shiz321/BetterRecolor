@@ -1,6 +1,7 @@
 from pathlib import Path
+from .config import *  # noqa
 
-BASE_DIR = Path("/content/drive/MyDrive/8MeTools/ButtonTextReColorizer").resolve()
+BASE_DIR = Path(".")
 ASSETS_DIR = BASE_DIR / "Assets"
 TMP_DIR = BASE_DIR / "tmp"
 EDITED_BRLYT_DIR = BASE_DIR / "EditedBRLYT"
