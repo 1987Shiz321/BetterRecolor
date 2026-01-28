@@ -35,6 +35,7 @@ def copy_all(src_dir, dst_dir):
 
 
 def main():
+    print("== BTRC: start ==")
     color_map = run_color_input_flow()
 
     default_free_text = (220, 220, 220)
@@ -46,10 +47,12 @@ def main():
 
     os.makedirs(BRLYT_JSON5_DIR, exist_ok=True)
     os.makedirs(BRLAN_JSON5_DIR, exist_ok=True)
+    print("Copy: Assets -> tmp")
     copy_all(ASSETS_DIR / "BRLYT", BRLYT_JSON5_DIR)
     copy_all(ASSETS_DIR / "BRLAN", BRLAN_JSON5_DIR)
 
     brlyt_files = list_json5_files(BRLYT_JSON5_DIR)
+    print(f"BRLYT json5: {len(brlyt_files)} files")
     text_black_rgb, text_white_rgb = (text_select_colors[1], text_select_colors[0])
     arrow_black_rgb, arrow_white_rgb = color_map["color_yajirushi"]
     color_map.update(
@@ -60,16 +63,19 @@ def main():
         }
     )
 
-    for path in brlyt_files:
+    for i, path in enumerate(brlyt_files, 1):
         with open(path, "r", encoding="utf-8") as f:
             text = f.read()
         new_text = apply_tev_colors(text, color_map)
         if new_text is not None:
             with open(path, "w", encoding="utf-8") as f:
                 f.write(new_text)
+        if i == 1 or i % 50 == 0 or i == len(brlyt_files):
+            print(f"BRLYT update: {i}/{len(brlyt_files)}")
 
     brlan_files = list_json5_files(BRLAN_JSON5_DIR)
-    for path in brlan_files:
+    print(f"BRLAN json5: {len(brlan_files)} files")
+    for i, path in enumerate(brlan_files, 1):
         data = read_json5(path)
         rule = select_color_rule(path, text_free_colors, text_select_colors)
         if rule is None:
@@ -77,14 +83,20 @@ def main():
         (start_outline, start_text), (end_outline, end_text) = rule
         updated = update_tev_colors(data, start_outline, start_text, end_outline, end_text)
         write_json5(path, updated)
+        if i == 1 or i % 50 == 0 or i == len(brlan_files):
+            print(f"BRLAN update: {i}/{len(brlan_files)}")
 
+    print("Encode: json5 -> brlyt/brlan")
     encode_json5_files(brlyt_files + brlan_files, WUJ5_SCRIPT)
+    print("Cleanup: remove json5")
     remove_json5_files(brlyt_files + brlan_files)
 
     os.makedirs(EDITED_BRLYT_DIR, exist_ok=True)
     os.makedirs(EDITED_BRLAN_DIR, exist_ok=True)
+    print("Move: tmp -> EditedBRLYT/EditedBRLAN")
     move_all_files(BRLYT_JSON5_DIR, EDITED_BRLYT_DIR)
     move_all_files(BRLAN_JSON5_DIR, EDITED_BRLAN_DIR)
+    print("== BTRC: done ==")
 
 
 if __name__ == "__main__":
