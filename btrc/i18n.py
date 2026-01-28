@@ -1,18 +1,8 @@
-MESSAGES = {
-    "ja": {
-        "invalid_hex": "無効なカラーコードです。#RRGGBB の形式で入力してください。",
-        "no_json5": "指定されたディレクトリにJSON5ファイルが存在しません。",
-        "done_encode": "すべてのJSON5ファイルをエンコードしました！",
-    },
-    "en": {
-        "invalid_hex": "Invalid color code. Use #RRGGBB.",
-        "no_json5": "No JSON5 files found in the directory.",
-        "done_encode": "All JSON5 files were encoded!",
-    },
-}
+import i18n
 
-LANG = "ja"
+# 翻訳ファイルのパスを追加
+i18n.load_path.append("./i18n")
 
-
-def t(key):
-    return MESSAGES.get(LANG, {}).get(key, key)
+# デフォルトのロケールを設定
+def set_locale(locale: str):
+    i18n.set('locale', locale)
