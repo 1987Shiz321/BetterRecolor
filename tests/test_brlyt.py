@@ -1,3 +1,8 @@
+from pathlib import Path
+import re
+
+import pytest
+
 from btrc.brlyt import apply_tev_colors
 
 
@@ -29,3 +34,29 @@ def test_apply_tev_colors_updates_block():
 def test_apply_tev_colors_returns_none_when_no_match():
     json_text = '{"name": "other", "tev color 1 a": 255}'
     assert apply_tev_colors(json_text, {}) is None
+
+
+def test_apply_tev_colors_real_data():
+    data_path = Path("Assets/BRLYT/Globe.d/message_window/blyt/common_w004_menu.brlyt.json5")
+    if not data_path.exists():
+        pytest.skip("Sample BRLYT data not found")
+
+    json_text = data_path.read_text(encoding="utf-8")
+    color_map = {"text": ((11, 22, 33), (201, 202, 203))}
+    updated = apply_tev_colors(json_text, color_map)
+    assert updated is not None
+
+    pattern = re.compile(
+        r'(\s*"name": "text".*?("tev color 1 a": \d+))',
+        re.DOTALL,
+    )
+    match = re.search(pattern, updated)
+    if match is None:
+        pytest.skip('No "text" block with tev colors found in sample')
+    block_text = match.group(1)
+    assert '"tev color 0 r": 11' in block_text
+    assert '"tev color 0 g": 22' in block_text
+    assert '"tev color 0 b": 33' in block_text
+    assert '"tev color 1 r": 201' in block_text
+    assert '"tev color 1 g": 202' in block_text
+    assert '"tev color 1 b": 203' in block_text
