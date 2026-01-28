@@ -1,5 +1,6 @@
 import os
 import shutil
+import time
 
 from btrc.config import (
     ASSETS_DIR,
@@ -34,7 +35,14 @@ def copy_all(src_dir, dst_dir):
             shutil.copy2(os.path.join(root, f), os.path.join(dst_root, f))
 
 
+def reset_dir(path):
+    if os.path.isdir(path):
+        shutil.rmtree(path)
+    os.makedirs(path, exist_ok=True)
+
+
 def main():
+    start_time = time.perf_counter()
     print("== BTRC: start ==")
     color_map = run_color_input_flow()
 
@@ -45,8 +53,12 @@ def main():
     text_free_colors = (default_free_text, free_outline)
     text_select_colors = (default_select_text, select_outline)
 
-    os.makedirs(BRLYT_JSON5_DIR, exist_ok=True)
-    os.makedirs(BRLAN_JSON5_DIR, exist_ok=True)
+    print("Reset: tmp and edited folders")
+    reset_dir(BRLYT_JSON5_DIR)
+    reset_dir(BRLAN_JSON5_DIR)
+    reset_dir(EDITED_BRLYT_DIR)
+    reset_dir(EDITED_BRLAN_DIR)
+
     print("Copy: Assets -> tmp")
     copy_all(ASSETS_DIR / "BRLYT", BRLYT_JSON5_DIR)
     copy_all(ASSETS_DIR / "BRLAN", BRLAN_JSON5_DIR)
@@ -91,12 +103,11 @@ def main():
     print("Cleanup: remove json5")
     remove_json5_files(brlyt_files + brlan_files)
 
-    os.makedirs(EDITED_BRLYT_DIR, exist_ok=True)
-    os.makedirs(EDITED_BRLAN_DIR, exist_ok=True)
     print("Move: tmp -> EditedBRLYT/EditedBRLAN")
     move_all_files(BRLYT_JSON5_DIR, EDITED_BRLYT_DIR)
     move_all_files(BRLAN_JSON5_DIR, EDITED_BRLAN_DIR)
-    print("== BTRC: done ==")
+    elapsed = time.perf_counter() - start_time
+    print(f"== BTRC: done ({elapsed:.2f}s) ==")
 
 
 if __name__ == "__main__":
