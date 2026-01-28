@@ -15,14 +15,26 @@ from btrc.brlyt import apply_tev_colors
 from btrc.cleanup import move_all_files, remove_json5_files
 from btrc.colors import get_outline_color_from_user, run_color_input_flow
 from btrc.encode import encode_json5_files
+from btrc.i18n import set_locale, t
 from btrc.json5_io import list_json5_files, read_json5, write_json5
 
-print(f"Using Assets directory: {ASSETS_DIR}")
-print(f"Using temporary BRLYT JSON5 directory: {BRLYT_JSON5_DIR}")
-print(f"Using temporary BRLAN JSON5 directory: {BRLAN_JSON5_DIR}")
-print(f"Using WUJ5 script: {WUJ5_SCRIPT}")
-print(f"Using Edited BRLYT directory: {EDITED_BRLYT_DIR}")
-print(f"Using Edited BRLAN directory: {EDITED_BRLAN_DIR}")
+
+def choose_locale():
+    choice = input("Language / 言語 (ja/en) [ja]: ").strip().lower()
+    if choice not in {"ja", "en"}:
+        choice = "ja"
+    set_locale(choice)
+    return choice
+
+
+def print_paths():
+    print(t("using_assets_dir").format(path=ASSETS_DIR))
+    print(t("using_tmp_brlyt_dir").format(path=BRLYT_JSON5_DIR))
+    print(t("using_tmp_brlan_dir").format(path=BRLAN_JSON5_DIR))
+    print(t("using_wuj5_script").format(path=WUJ5_SCRIPT))
+    print(t("using_edited_brlyt_dir").format(path=EDITED_BRLYT_DIR))
+    print(t("using_edited_brlan_dir").format(path=EDITED_BRLAN_DIR))
+
 
 def copy_all(src_dir, dst_dir):
     src_dir = str(src_dir)
@@ -43,7 +55,9 @@ def reset_dir(path):
 
 def main():
     start_time = time.perf_counter()
-    print("== BTRC: start ==")
+    choose_locale()
+    print_paths()
+    print(t("btrc_start"))
     color_map = run_color_input_flow()
 
     default_free_text = (220, 220, 220)
@@ -53,18 +67,18 @@ def main():
     text_free_colors = (default_free_text, free_outline)
     text_select_colors = (default_select_text, select_outline)
 
-    print("Reset: tmp and edited folders")
+    print(t("reset_tmp_and_edited"))
     reset_dir(BRLYT_JSON5_DIR)
     reset_dir(BRLAN_JSON5_DIR)
     reset_dir(EDITED_BRLYT_DIR)
     reset_dir(EDITED_BRLAN_DIR)
 
-    print("Copy: Assets -> tmp")
+    print(t("copy_assets_to_tmp"))
     copy_all(ASSETS_DIR / "BRLYT", BRLYT_JSON5_DIR)
     copy_all(ASSETS_DIR / "BRLAN", BRLAN_JSON5_DIR)
 
     brlyt_files = list_json5_files(BRLYT_JSON5_DIR)
-    print(f"BRLYT json5: {len(brlyt_files)} files")
+    print(t("brlyt_json5_count").format(count=len(brlyt_files)))
     text_black_rgb, text_white_rgb = (text_select_colors[1], text_select_colors[0])
     arrow_black_rgb, arrow_white_rgb = color_map["color_yajirushi"]
     color_map.update(
@@ -83,10 +97,14 @@ def main():
             with open(path, "w", encoding="utf-8") as f:
                 f.write(new_text)
         if i == 1 or i % 50 == 0 or i == len(brlyt_files):
-            print(f"BRLYT update: {i}/{len(brlyt_files)}")
+            print(
+                t("brlyt_update_progress").format(
+                    current=i, total=len(brlyt_files)
+                )
+            )
 
     brlan_files = list_json5_files(BRLAN_JSON5_DIR)
-    print(f"BRLAN json5: {len(brlan_files)} files")
+    print(t("brlan_json5_count").format(count=len(brlan_files)))
     for i, path in enumerate(brlan_files, 1):
         data = read_json5(path)
         rule = select_color_rule(path, text_free_colors, text_select_colors)
@@ -96,18 +114,22 @@ def main():
         updated = update_tev_colors(data, start_outline, start_text, end_outline, end_text)
         write_json5(path, updated)
         if i == 1 or i % 50 == 0 or i == len(brlan_files):
-            print(f"BRLAN update: {i}/{len(brlan_files)}")
+            print(
+                t("brlan_update_progress").format(
+                    current=i, total=len(brlan_files)
+                )
+            )
 
-    print("Encode: json5 -> brlyt/brlan")
+    print(t("encode_json5"))
     encode_json5_files(brlyt_files + brlan_files, WUJ5_SCRIPT)
-    print("Cleanup: remove json5")
+    print(t("cleanup_json5"))
     remove_json5_files(brlyt_files + brlan_files)
 
-    print("Move: tmp -> EditedBRLYT/EditedBRLAN")
+    print(t("move_tmp_to_edited"))
     move_all_files(BRLYT_JSON5_DIR, EDITED_BRLYT_DIR)
     move_all_files(BRLAN_JSON5_DIR, EDITED_BRLAN_DIR)
     elapsed = time.perf_counter() - start_time
-    print(f"== BTRC: done ({elapsed:.2f}s) ==")
+    print(t("btrc_done").format(elapsed=elapsed))
 
 
 if __name__ == "__main__":

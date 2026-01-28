@@ -1,5 +1,6 @@
 import re
 from colr import color
+from .i18n import t
 
 HEX_PATTERN = re.compile(r"^#([A-Fa-f0-9]{6})$")
 
@@ -9,7 +10,7 @@ def get_valid_hex_color(prompt):
         value = input(prompt).strip()
         if HEX_PATTERN.match(value):
             return value
-        print("invalid_hex")
+        print(t("invalid_hex"))
 
 
 def hex_to_rgb(hex_color):
@@ -28,13 +29,15 @@ def print_color(name, rgb):
 def get_outline_color_from_user(state_name, default_hex):
     while True:
         user_input = input(
-            f"{state_name} の縁取りカラー（空欄でデフォルト {default_hex}）: "
+            t("prompt_outline_color").format(
+                state_name=state_name, default_hex=default_hex
+            )
         ).strip()
         if user_input == "":
             user_input = default_hex
         if HEX_PATTERN.match(user_input):
             return tuple(int(user_input[i : i + 2], 16) for i in (1, 3, 5))
-        print("invalid_hex")
+        print(t("invalid_hex"))
 
 
 color_presets = {
@@ -51,19 +54,31 @@ color_presets = {
 
 def print_preset(name):
     preset = color_presets[name]
-    print(f"◆{name} のカラー◆")
-    print(f"BlackColor: {preset['black']} {color('■', fore=preset['black'])}")
-    print(f"WhiteColor: {preset['white']} {color('■', fore=preset['white'])}")
+    print(t("preset_title").format(name=name))
+    print(
+        t("preset_black").format(
+            value=preset["black"], block=color("■", fore=preset["black"])
+        )
+    )
+    print(
+        t("preset_white").format(
+            value=preset["white"], block=color("■", fore=preset["white"])
+        )
+    )
 
 
 def get_custom_color_and_update(name):
-    print(f"\n=== {name} のカラー設定 ===")
+    print(t("section_color_settings").format(name=name))
     default_black = color_presets[name]["black"]
     default_white = color_presets[name]["white"]
-    print(f"デフォルト → Black: {default_black}, White: {default_white}")
+    print(
+        t("defaults_black_white").format(
+            default_black=default_black, default_white=default_white
+        )
+    )
 
-    black = get_valid_hex_color(f"{name}のBlackColorを入力してください: ")
-    white = get_valid_hex_color(f"{name}のWhiteColorを入力してください: ")
+    black = get_valid_hex_color(t("prompt_black").format(name=name))
+    white = get_valid_hex_color(t("prompt_white").format(name=name))
 
     color_presets[name]["black"] = black
     color_presets[name]["white"] = white
@@ -88,7 +103,7 @@ def run_color_input_flow():
     arrow_black_rgb, arrow_white_rgb = get_custom_color_and_update("color_yajirushi")
     ability_black_rgb, ability_white_rgb = get_custom_color_and_update("ability_graph2")
 
-    print("\n=== カラープレビュー ===")
+    print(t("section_color_preview"))
     for preset_name in color_presets:
         print_preset(preset_name)
 
