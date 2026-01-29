@@ -119,6 +119,6 @@ pytest
 
 - GitHubのIssuesにてお知らせください。
 
-## クレジット
+## Third-Party
 
-- [wuj5](https://github.com/stblr/wuj5) by [stblr](https://github.com/stblr)
+このリポジトリには MIT ライセンスの[wuj5](https://github.com/stblr/wuj5)を同梱しています。ライセンスは `wuj5/LICENSE` を参照してください。
