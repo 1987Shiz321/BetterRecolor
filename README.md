@@ -38,29 +38,16 @@ Google Colaboratoryを初めて利用する方は、以下の動画を参考に�
 
 Google Colab以外の環境でも実行できます。`Assets` などのフォルダ構成はそのままにしてください。
 
-1. **wuj5のインストール**
-   このリポジトリ内でwuj5リポジトリをクローンします。
-
-   ```sh
-   # httpsの場合
-   git clone https://github.com/stblr/wuj5.git
-   ```
-
-   ```sh
-   #sshの場合
-   git@github.com:stblr/wuj5.git
-   ```
-
-2. **依存関係のインストール**  
+1. **依存関係のインストール**  
    `pip install -r requirements.txt`
 
-3. **実行**  
+2. **実行**  
    `python main.py`
 
-4. **言語の選択**  
+3. **言語の選択**  
    起動時に `Language / 言語 (ja/en) [ja]:` と表示されるので、`ja` または `en` を入力してください。
 
-5. **出力先**  
+4. **出力先**  
    完了後、`EditedBRLYT` と `EditedBRLAN` に出力されます。
 
 ## 開発者向け
